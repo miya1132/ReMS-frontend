@@ -43,7 +43,7 @@ const Login = () => {
     axiosClient
       .post(loginPath, loginData)
       .then((response: AxiosResponse) => {
-        console.log(response.data);
+        // console.log(response.data);
         // 認可情報を SessionStorage に設定
         sessionStorage.setItem("AUTHORITY", JSON.stringify(response.data));
 
@@ -51,7 +51,7 @@ const Login = () => {
         navigate("/");
       })
       .catch((error) => {
-        console.log("エラー", error);
+        // console.log("エラー", error);
         // console.log(error.response.data);
         if (error.response) setErrorMessage(error.response.data.detail);
         else setErrorMessage("サーバーエラー");
