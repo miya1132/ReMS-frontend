@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import axios, { InternalAxiosRequestConfig } from "axios";
 import { useNavigate } from "react-router-dom";
+import Loading from "@/components/Loading";
 
 // デフォルト config の設定
-export const axiosClient = axios.create({
+const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_API_HOST,
   timeout: 5000,
   headers: {
@@ -11,14 +12,18 @@ export const axiosClient = axios.create({
   },
 });
 
-export function AxiosClientProvider({ children }: { children: React.ReactElement }) {
+export function AxiosClientProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   React.useEffect(() => {
+    console.log("AxiosClientProviderコール");
     // リクエスト インターセプター
     const requestInterceptors = axiosClient.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
-        // console.log("リクエスト インターセプター");
+        setLoading(true);
+
+        console.log("リクエスト インターセプター");
         if (config.headers !== undefined) {
           // const accessToken = getAccessToken()
           // if (accessToken) {
@@ -32,11 +37,15 @@ export function AxiosClientProvider({ children }: { children: React.ReactElement
     // レスポンス インターセプター
     const responseInterceptor = axiosClient.interceptors.response.use(
       (response) => {
-        // console.log("レスポンス インターセプター");
+        setLoading(false);
+
+        console.log("レスポンス インターセプター");
         return response;
       },
       (error) => {
-        // console.log("レスポンス インターセプターエラー", error.response?.status);
+        setLoading(false);
+
+        console.log("レスポンス インターセプターエラー", error.response?.status);
         switch (error.response?.status) {
           case 401:
             // 認証エラーの場合は、ログインフォームへリダイレクト
@@ -56,5 +65,12 @@ export function AxiosClientProvider({ children }: { children: React.ReactElement
     };
   }, []);
 
-  return <>{children}</>;
+  return (
+    <>
+      {loading && <Loading visible={loading} />}
+      {children}
+    </>
+  );
 }
+
+export default axiosClient;
