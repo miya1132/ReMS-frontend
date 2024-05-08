@@ -3,10 +3,9 @@ import { useForm, SubmitHandler, FieldValues } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosResponse } from "axios";
 import axiosClient from "@/extends/AxiosClientProvider";
-// import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+// import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 
@@ -38,14 +37,12 @@ const Login = () => {
 
   const onSubmit: SubmitHandler<FieldValues> = (data: FieldValues) => {
     const loginData = data as LoginForm;
-    const loginPath = import.meta.env.VITE_API_HOST + "/login/";
+    const loginPath = import.meta.env.VITE_API_HOST + "/auth/login/";
 
     // ログイン API へ POST
-    // axios
     axiosClient
       .post(loginPath, loginData)
       .then((response: AxiosResponse) => {
-        console.log(response.data);
         // 認可情報を SessionStorage に設定
         sessionStorage.setItem("AUTHORITY", JSON.stringify(response.data));
 
@@ -53,8 +50,6 @@ const Login = () => {
         navigate("/");
       })
       .catch((error) => {
-        console.log("エラー", error);
-        console.log(error.response.data);
         if (error.response) setErrorMessage(error.response.data.detail);
         else setErrorMessage("サーバーエラー");
       })
@@ -62,9 +57,9 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-gray-50">
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <a href="#" className="flex items-center mb-6 text-2xl font-semibold text-gray-900">
+    <div>
+      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 text-black">
+        <a href="#" className="flex items-center mb-6 text-2xl font-semibold text-white">
           <img
             className="w-8 h-8 mr-2"
             src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
@@ -78,16 +73,16 @@ const Login = () => {
             {/* <p className="text-red-500">{errorMessage}</p> */}
             <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit(onSubmit)}>
               <div>
-                <Label htmlFor="email" className="block mb-2">
+                <label htmlFor="email" className="block mb-2">
                   メールアドレス
-                </Label>
+                </label>
                 <Input type="email" id="email" {...register("email")} />
                 <p className="text-red-500">{errors.email?.message as React.ReactNode}</p>
               </div>
               <div>
-                <Label htmlFor="password" className="block mb-2">
+                <label htmlFor="password" className="block mb-2">
                   パスワード
-                </Label>
+                </label>
                 <Input type="password" id="password" {...register("password")} />
                 <p className="text-red-500">{errors.password?.message as React.ReactNode}</p>
               </div>

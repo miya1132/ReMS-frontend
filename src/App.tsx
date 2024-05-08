@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Notfound from "@/pages/Notfound";
 import Dashboard from "@/pages/Dashboard";
 import Page1 from "@/pages/Page1";
+import Page2 from "@/pages/Page2";
 
 function App() {
   // 認証確認メソッド
@@ -27,7 +28,9 @@ function App() {
         <AxiosClientProvider>
           <Routes>
             <Route path="/" element={<RequireAuth component={<Dashboard />} />}>
-              <Route path="" element={<Page1 />} />
+              <Route index element={<Page1 />} />
+              <Route path="page1" element={<Page1 />} />
+              <Route path="page2" element={<Page2 />} />
             </Route>
             <Route path="/login" element={<Login />} />
             <Route path="*" element={<Notfound />} />

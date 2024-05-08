@@ -1,14 +1,23 @@
+import { RecoilRoot, atom } from "recoil";
 import { Outlet } from "react-router-dom";
-
 import Header from "@/components/Header";
-import SideBar from "@/components/SideBar";
+
+export const limitAtom = atom({
+  key: "limit",
+  default: 0,
+});
 
 const Dashboard = () => {
   return (
     <>
-      <Header />
-      <SideBar />
-      <Outlet />
+      <RecoilRoot>
+        <div className="w-full h-full flex flex-col">
+          <Header />
+          <div className="flex-grow">
+            <Outlet />
+          </div>
+        </div>
+      </RecoilRoot>
     </>
   );
 };

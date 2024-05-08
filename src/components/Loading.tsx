@@ -1,7 +1,6 @@
-// import React from "react";
 import PropTypes from "prop-types";
 
-const Loading = ({ visible }) => {
+const LoadingComponent = ({ visible }) => {
   return (
     <>
       {visible && (
@@ -31,8 +30,8 @@ const Loading = ({ visible }) => {
   );
 };
 
-Loading.propTypes = {
+LoadingComponent.propTypes = {
   visible: PropTypes.bool.isRequired,
 };
 
-export default Loading;
+export default LoadingComponent;

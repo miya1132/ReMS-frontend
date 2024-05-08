@@ -17,14 +17,18 @@ export function AxiosClientProvider({ children }: { children: React.ReactNode })
   const [loading, setLoading] = useState(false);
 
   React.useEffect(() => {
-    console.log("AxiosClientProviderコール");
     // リクエスト インターセプター
     const requestInterceptors = axiosClient.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
         setLoading(true);
 
-        console.log("リクエスト インターセプター");
         if (config.headers !== undefined) {
+          const authority = sessionStorage.getItem("AUTHORITY");
+          console.log("config", authority);
+          if (authority) {
+            const json = JSON.parse(authority);
+            config.headers.Authorization = `Bearer ${json.access_token}`;
+          }
           // const accessToken = getAccessToken()
           // if (accessToken) {
           //   config.headers.Authorization = `Bearer ${accessToken}`
@@ -38,14 +42,11 @@ export function AxiosClientProvider({ children }: { children: React.ReactNode })
     const responseInterceptor = axiosClient.interceptors.response.use(
       (response) => {
         setLoading(false);
-
-        console.log("レスポンス インターセプター");
         return response;
       },
       (error) => {
         setLoading(false);
 
-        console.log("レスポンス インターセプターエラー", error.response?.status);
         switch (error.response?.status) {
           case 401:
             // 認証エラーの場合は、ログインフォームへリダイレクト
