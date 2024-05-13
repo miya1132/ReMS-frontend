@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 
-const LoadingComponent = ({ visible }) => {
+const LoadingComponent = ({ visible }: { visible: boolean }) => {
   return (
     <>
       {visible && (

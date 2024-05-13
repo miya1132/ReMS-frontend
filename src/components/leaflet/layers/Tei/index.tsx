@@ -1,14 +1,49 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useMap } from "react-leaflet";
 import { LatLng } from "leaflet";
 import * as d3 from "d3";
 import * as d3Geo from "d3-geo";
-import { GeoJson as GeoJSONType } from "@/types/GeoJson.ts";
-import format from "@/utils/format.ts";
+import { useRecoilState, useRecoilValue } from "recoil";
 
-const Tei = ({ data }: { data: GeoJSONType }) => {
+import { GeoJson as GeoJSONType } from "@/types/GeoJson.ts";
+import axiosClient from "@/extends/AxiosClientProvider";
+import styles from "./Tei.module.css";
+// import { limitAtom } from "@/pages/Dashboard";
+import { searchKeyAtom } from "@/App";
+import { searchAtom } from "@/App";
+import { useUpdateEffect } from "@/hooks/useUpdateEffect";
+
+const Tei = () => {
+  const [data, setData] = useState<GeoJSONType>({ type: "FeatureCollection", features: [] });
+  // const [limit] = useRecoilState(limitAtom);
+  // const [search, setSearch] = useRecoilState(searchAtom);
+  // const isFirstRender = useRef(true);
+  const searchKey = useRecoilValue(searchKeyAtom);
+  const [search, setSearch] = useRecoilState(searchAtom);
+
   const map = useMap();
+
+  const getData = async (limit: number) => {
+    const response = await axiosClient.get(import.meta.env.VITE_API_HOST + `/teis?limit=${limit}`);
+    const body = JSON.parse(JSON.stringify(response.data));
+    return body;
+  };
+
+  const refresh = async () => {
+    const data = await getData(searchKey.limit);
+    setData(data);
+  };
+
+  useUpdateEffect(() => {
+    console.log("searchKey.search", search);
+    if (search == false) return;
+
+    if (search) {
+      refresh();
+      setSearch(false);
+    }
+  }, [search]);
 
   useEffect(() => {
     (async () => {
@@ -42,7 +77,7 @@ const Tei = ({ data }: { data: GeoJSONType }) => {
 
       // fit the SVG element to leaflet's map layer
       function reset() {
-        // ツールチップ非表示
+        // TODO：ツールチップ非表示
         // if (isSp) tooltip.style("visibility", "hidden");
 
         const bounds = map.getBounds();
@@ -71,32 +106,23 @@ const Tei = ({ data }: { data: GeoJSONType }) => {
           .attr("style", "pointer-events: auto;")
           .on("mouseover", function (e) {
             const d = e.target.__data__;
-            const walking_at = new Date(d.properties.walking_at);
 
             tooltip
               .style("visibility", "visible")
               .html(
-                "日時：" +
-                  format.get_formated_time("YYYY/MM/DD hh:mm:ss", walking_at) +
+                d.properties.tei_cd +
+                  "：" +
+                  d.properties.tei_name +
                   "<br>" +
                   "緯度：" +
                   d.properties.latitude +
                   "<br>" +
                   "経度：" +
-                  d.properties.longitude +
-                  "<br>" +
-                  "高度：" +
-                  d.properties.altitude +
-                  "<br>" +
-                  "精度：" +
-                  d.properties.accuracy +
-                  "<br>" +
-                  "速度：" +
-                  d.properties.speed,
+                  d.properties.longitude,
               );
           })
           .on("mousemove", function (e) {
-            tooltip.style("top", e.pageY - 20 + "px").style("left", e.pageX + 10 + "px");
+            tooltip.style("top", e.pageY - 50 + "px").style("left", e.pageX + 0 + "px");
           })
           .on("mouseout", function () {
             tooltip.style("visibility", "hidden");
@@ -115,11 +141,11 @@ const Tei = ({ data }: { data: GeoJSONType }) => {
       const point = map.latLngToLayerPoint(new LatLng(y, x));
       this.stream.point(point.x, point.y);
     }
-  }, [map]);
+  }, [map, data]);
 
   return (
     <div>
-      <div id="tooltip"></div>
+      <div id="tooltip" className={styles.Tooltip}></div>
     </div>
   );
 };

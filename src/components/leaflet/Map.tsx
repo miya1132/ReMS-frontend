@@ -4,7 +4,7 @@ import "leaflet/dist/leaflet.css";
 
 const Map = ({ children }: { children: React.ReactNode }) => {
   const center = new LatLng(33.5256198, 130.42547847);
-  const zoom = 15;
+  const zoom = 13;
 
   return (
     <MapContainer

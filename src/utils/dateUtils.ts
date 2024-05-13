@@ -1,4 +1,4 @@
-const format = {
+const dateUtils = {
   //-------------------------------------------------------
   // 現在の日時を文字列で返す
   get_formated_time: (_fmt: string = "YYYY/MM/DD hh:mm:ss.iii", _dt: Date = new Date()) => {
@@ -16,6 +16,18 @@ const format = {
       _fmt,
     );
   },
+
+  getStartOfDay: (_dt: Date) => {
+    const startOfDay = new Date(_dt);
+    startOfDay.setHours(0, 0, 0, 0);
+    return startOfDay;
+  },
+
+  getEndOfDay: (_dt: Date) => {
+    const endOfDay = new Date(_dt);
+    endOfDay.setHours(23, 59, 59, 999);
+    return endOfDay;
+  },
 };
 
-export default format;
+export default dateUtils;

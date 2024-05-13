@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import axios, { InternalAxiosRequestConfig } from "axios";
 import { useNavigate } from "react-router-dom";
-import Loading from "@/components/Loading";
+import Loading from "@/components/layouts/Loading";
 
 // デフォルト config の設定
 const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_API_HOST,
-  timeout: 5000,
+  timeout: 60000,
   headers: {
     "Content-Type": "application/json",
   },
@@ -46,6 +46,13 @@ export function AxiosClientProvider({ children }: { children: React.ReactNode })
       },
       (error) => {
         setLoading(false);
+
+        // //タイムアウトの場合
+        // const isTimeout = error.code === "ECONNABORTED";
+        // if (isTimeout) {
+        //   //do something
+        //   return;
+        // }
 
         switch (error.response?.status) {
           case 401:

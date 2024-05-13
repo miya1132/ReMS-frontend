@@ -1,0 +1,15 @@
+.Tooltip {
+  position: absolute;
+  width: auto;
+  height: auto;
+  padding: 5px;
+  font: 13px sans-serif;
+  color: #fff;
+  background: #333;
+  -webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  -moz-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  border-radius: 4px;
+  visibility: hidden;
+  z-index: 400;
+}
